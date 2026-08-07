@@ -1,8 +1,8 @@
 """
 validators.py
 --------------
-LLM'in cikardigi alanlari KOR gibi kabul etmiyorum, dogruluyorum.
-Bankada en onemli kisim bu: model uydurmis olabilir, kontrol sart.
+LLM'in cikardigi alanlari oldugu gibi kabul etmiyorum, dogruluyorum.
+Bankada en onemli kisim bu: model uydurmus olabilir, kontrol sart.
 EN: I don't blindly trust the LLM output — I validate it. In banking this
 matters most: the model might hallucinate, so checks are a must.
 """
