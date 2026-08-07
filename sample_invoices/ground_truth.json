@@ -1,0 +1,122 @@
+{
+  "fatura_01.pdf": {
+    "fatura_no": "INV-2024-1502",
+    "taraf": "Kuzey Insaat A.S.",
+    "musteri": "Can Ozturk",
+    "tarih": "20.11.2024",
+    "tutar": "85.941 TL",
+    "iban": "TR106965573071359388426222"
+  },
+  "fatura_02.pdf": {
+    "fatura_no": "INV-2024-5621",
+    "taraf": "Ege Gida San. Tic.",
+    "musteri": "Can Ozturk",
+    "tarih": "16.02.2024",
+    "tutar": "61.593 TL",
+    "iban": "TR743633118280485753840888"
+  },
+  "fatura_03.pdf": {
+    "fatura_no": "INV-2024-3778",
+    "taraf": "Ege Gida San. Tic.",
+    "musteri": "Burak Aydin",
+    "tarih": "16.12.2024",
+    "tutar": "44.759 TL",
+    "iban": "TR320285601541129768721546"
+  },
+  "fatura_04.pdf": {
+    "fatura_no": "INV-2024-1976",
+    "taraf": "Marmara Enerji A.S.",
+    "musteri": "Elif Sahin",
+    "tarih": "21.10.2024",
+    "tutar": "33.201 TL",
+    "iban": "TR502639489102258715599771"
+  },
+  "fatura_05.pdf": {
+    "fatura_no": "INV-2024-8213",
+    "taraf": "Ada Yazilim A.S.",
+    "musteri": "Zeynep Yilmaz",
+    "tarih": "03.09.2024",
+    "tutar": "20.985 TL",
+    "iban": "TR482915623993490124031339"
+  },
+  "fatura_06.pdf": {
+    "fatura_no": "INV-2024-4574",
+    "taraf": "Ada Yazilim A.S.",
+    "musteri": "Zeynep Yilmaz",
+    "tarih": "27.05.2024",
+    "tutar": "37.612 TL",
+    "iban": "TR578216666143026218325850"
+  },
+  "fatura_07.pdf": {
+    "fatura_no": "INV-2024-4547",
+    "taraf": "Ada Yazilim A.S.",
+    "musteri": "Zeynep Yilmaz",
+    "tarih": "09.05.2024",
+    "tutar": "81.251 TL",
+    "iban": "TR817725038899972317856882"
+  },
+  "fatura_08.pdf": {
+    "fatura_no": "INV-2024-8163",
+    "taraf": "Deniz Lojistik",
+    "musteri": "Can Ozturk",
+    "tarih": "19.01.2024",
+    "tutar": "10.619 TL",
+    "iban": "TR681661810596601159096436"
+  },
+  "fatura_09.pdf": {
+    "fatura_no": "INV-2024-4585",
+    "taraf": "Marmara Enerji A.S.",
+    "musteri": "Zeynep Yilmaz",
+    "tarih": "03.12.2024",
+    "tutar": "33.143 TL",
+    "iban": "TR081073502727853055127148"
+  },
+  "fatura_10.pdf": {
+    "fatura_no": "INV-2024-6004",
+    "taraf": "Meric Tekstil Ltd.",
+    "musteri": "Burak Aydin",
+    "tarih": "08.01.2024",
+    "tutar": "52.564 TL",
+    "iban": "TR414651999595460064921742"
+  },
+  "fatura_11.pdf": {
+    "fatura_no": "INV-2024-7868",
+    "taraf": "Ada Yazilim A.S.",
+    "musteri": "Elif Sahin",
+    "tarih": "10.11.2024",
+    "tutar": "41.506 TL",
+    "iban": "TR102926066077321806634381"
+  },
+  "fatura_12.pdf": {
+    "fatura_no": "INV-2024-7616",
+    "taraf": "Marmara Enerji A.S.",
+    "musteri": "Zeynep Yilmaz",
+    "tarih": "06.02.2024",
+    "tutar": "29.908 TL",
+    "iban": "TR729098635666436028100415"
+  },
+  "fatura_13.pdf": {
+    "fatura_no": "INV-2024-1222",
+    "taraf": "Marmara Enerji A.S.",
+    "musteri": "Burak Aydin",
+    "tarih": "01.02.2024",
+    "tutar": "56.882 TL",
+    "iban": "TR966507785928758921162862"
+  },
+  "fatura_14.pdf": {
+    "fatura_no": "INV-2024-4727",
+    "taraf": "Ege Gida San. Tic.",
+    "musteri": "Ayse Kaya",
+    "tarih": "11.03.2024",
+    "tutar": "85.039 TL",
+    "iban": "TR432046502212931758598878"
+  },
+  "fatura_15.pdf": {
+    "fatura_no": "INV-2024-3973",
+    "taraf": "Kuzey Insaat A.S.",
+    "musteri": "Can Ozturk",
+    "tarih": "10.07.2024",
+    "tutar": "55.711 TL",
+    "iban": "TR885088936870895837999163"
+  }
+}
