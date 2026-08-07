@@ -70,6 +70,14 @@ python gen_invoices.py
 streamlit run app.py
 ```
 
+### Docker ile çalıştırma
+Uygulamayı taşınabilir bir container olarak da çalıştırabilirsin:
+```bash
+docker build -t document-extractor .
+docker run -p 8501:8501 -e GROQ_API_KEY=senin_anahtarin document-extractor
+```
+Anahtar container'a **runtime'da** ortam değişkeni olarak verilir (`.env` repoya/imaja girmez). Production'da anahtar bir secret servisinde (ör. GCP Secret Manager) tutulur.
+
 ### Dosyalar
 | Dosya | Ne yapıyor |
 |---|---|
@@ -78,17 +86,18 @@ streamlit run app.py
 | `validators.py` | IBAN/tarih/tutar doğrulama (mod-97) |
 | `evaluate.py` | Alan bazlı accuracy raporu (`ground_truth.json` ile) |
 | `app.py` | Streamlit arayüzü |
+| `Dockerfile` | Uygulamayı container'a paketler |
 
 ### Doğruluk ölçümü (evaluation)
 `python evaluate.py` LLM çıktısını doğru cevaplarla karşılaştırıp **alan bazlı accuracy** verir. Ground truth sadece geliştirmede var (veriyi ben ürettim); production'da doğru cevap olmaz, orada `validators.py` checksum'larına güvenilir.
 
 ### Sonraki adımlar (yol haritası)
+- ✅ Docker ile containerize (tamamlandı)
 - Layout-aware model (LayoutLMv3 / Donut) ile taranmış belgelerde alan çıkarma.
-- `ground_truth.json` ile alan bazlı accuracy raporu (`evaluate.py`).
-- Docker + cloud (GCP Cloud Run / HF Spaces) ile canlı deploy.
+- GCP Cloud Run ile canlı deploy (sıradaki adım).
 
 ### Teknolojiler
-Python · pdfplumber · Groq (Llama-3.3) · Streamlit · reportlab
+Python · pdfplumber · Groq (Llama-3.3) · Streamlit · Docker · reportlab
 
 ---
 
@@ -158,6 +167,14 @@ python gen_invoices.py
 streamlit run app.py
 ```
 
+### Run with Docker
+You can also run the app as a portable container:
+```bash
+docker build -t document-extractor .
+docker run -p 8501:8501 -e GROQ_API_KEY=your_key document-extractor
+```
+The key is passed as a **runtime** environment variable (`.env` never enters the repo/image). In production the key lives in a secret manager (e.g. GCP Secret Manager).
+
 ### Files
 | File | What it does |
 |---|---|
@@ -166,14 +183,15 @@ streamlit run app.py
 | `validators.py` | IBAN/date/amount validation (mod-97) |
 | `evaluate.py` | Field-level accuracy report (against `ground_truth.json`) |
 | `app.py` | Streamlit UI |
+| `Dockerfile` | Packages the app into a container |
 
 ### Evaluation
 `python evaluate.py` compares the LLM output against the ground truth and reports **field-level accuracy**. Ground truth only exists in development (I generated the data); in production there is no answer key, so we rely on the checksum validation in `validators.py`.
 
 ### Next steps (roadmap)
+- ✅ Containerized with Docker (done)
 - Layout-aware models (LayoutLMv3 / Donut) for scanned documents.
-- Field-level accuracy report using `ground_truth.json` (`evaluate.py`).
-- Docker + cloud deployment (GCP Cloud Run / HF Spaces).
+- Live deployment on GCP Cloud Run (next step).
 
 ### Tech stack
-Python · pdfplumber · Groq (Llama-3.3) · Streamlit · reportlab
+Python · pdfplumber · Groq (Llama-3.3) · Streamlit · Docker · reportlab
