@@ -43,7 +43,7 @@ PDF yükle → metni çıkar (pdfplumber) → LLM alanları JSON olarak çıkars
 
 ### Ne yaptım (teknik)
 - **Metin çıkarma:** `pdfplumber` ile PDF'ten ham metin.
-- **Structured extraction:** LLM'e (Groq / Llama-3.3) JSON şemasıyla soruyorum; `response_format=json_object` ile modeli **sadece JSON** döndürmeye zorluyorum → çıktı makine-okunur.
+- **Structured extraction:** LLM'e (Groq / gpt-oss-120b) JSON şemasıyla soruyorum; `response_format=json_object` ile modeli **sadece JSON** döndürmeye zorluyorum → çıktı makine-okunur.
 - **Doğrulama katmanı:** LLM çıktısını körü körüne kabul etmiyorum. IBAN'ı **mod-97 checksum** ile, tarihi ve tutarı format ile doğruluyorum. (Regüle ortamlarda güven için şart.)
 - **Arayüz:** Streamlit ile yükle-gör; JSON indirme.
 - **Test verisi:** Gerçek banka verisi PII olduğu için `gen_invoices.py` ile **sentetik** faturalar ürettim (doğru cevaplarıyla birlikte).
@@ -99,7 +99,7 @@ Anahtar container'a **runtime'da** ortam değişkeni olarak verilir (`.env` repo
 - GCP Cloud Run ile canlı deploy (sıradaki adım).
 
 ### Teknolojiler
-Python · pdfplumber · Groq (Llama-3.3) · Streamlit · Docker · reportlab
+Python · pdfplumber · Groq (gpt-oss-120b) · Streamlit · Docker · reportlab
 
 ---
 
@@ -140,7 +140,7 @@ Upload PDF → extract text (pdfplumber) → LLM returns fields as JSON
 
 ### What I did (technical)
 - **Text extraction:** raw text from the PDF with `pdfplumber`.
-- **Structured extraction:** I prompt the LLM (Groq / Llama-3.3) with a JSON schema and use `response_format=json_object` to force **JSON-only** output → machine-readable.
+- **Structured extraction:** I prompt the LLM (Groq / gpt-oss-120b) with a JSON schema and use `response_format=json_object` to force **JSON-only** output → machine-readable.
 - **Validation layer:** I don't blindly trust the LLM output. I validate the IBAN with the **mod-97 checksum**, and the date/amount by format. (Essential for trust in regulated settings.)
 - **UI:** upload-and-view with Streamlit; JSON download.
 - **Test data:** Since real bank data is PII, I generated **synthetic** invoices with `gen_invoices.py` (together with their ground truth).
@@ -196,4 +196,4 @@ The key is passed as a **runtime** environment variable (`.env` never enters the
 - Live deployment on GCP Cloud Run (next step).
 
 ### Tech stack
-Python · pdfplumber · Groq (Llama-3.3) · Streamlit · Docker · reportlab
+Python · pdfplumber · Groq (gpt-oss-120b) · Streamlit · Docker · reportlab
