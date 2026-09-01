@@ -49,7 +49,7 @@ Fatura metni:
 \"\"\"{text}\"\"\""""
 
     resp = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",           # Groq uzerinde hizli calisan model
+        model="openai/gpt-oss-120b",           # Groq uzerinde hizli calisan model
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},    # <-- JSON'a zorla / force JSON
         temperature=0,                              # tutarli cikti icin 0 / 0 = deterministic
