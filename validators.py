@@ -8,6 +8,7 @@ matters most: the model might hallucinate, so checks are a must.
 """
 
 import re
+from datetime import datetime
 
 
 def is_valid_iban(iban: str) -> bool:
@@ -33,20 +34,23 @@ def is_valid_date(date_str: str) -> bool:
     """Tarih GG.AA.YYYY formatinda ve mantikli mi? / date format + basic sanity."""
     if not date_str:
         return False
-    m = re.match(r"^(\d{2})\.(\d{2})\.(\d{4})$", date_str.strip())
-    if not m:
+    # strptime gercek takvimi kontrol eder: 31.02.2024 gibi tarihleri reddeder
+    # EN: strptime checks the real calendar, so dates like 31.02.2024 are rejected
+    try:
+        d = datetime.strptime(date_str.strip(), "%d.%m.%Y")
+    except ValueError:
         return False
-    d, mo, y = map(int, m.groups())
-    return 1 <= d <= 31 and 1 <= mo <= 12 and 2000 <= y <= 2100
+    return 2000 <= d.year <= 2100
 
 
 def is_valid_amount(amount_str: str) -> bool:
     """Tutar icinde gercek bir sayi var mi? / does the amount contain a real number?"""
     if not amount_str:
         return False
-    # sadece rakamlari al (nokta/virgul/TL at) ve sayi mi diye bak
-    digits = re.sub(r"[^\d]", "", amount_str)
-    return len(digits) > 0
+    # sayi + istege bagli para birimi: "55.028 TL", "1.250,50 TL", "3000"
+    # EN: a number with optional thousand dots, optional decimals and an optional currency
+    pattern = r"^\d{1,3}(\.\d{3})*(,\d{1,2})?\s*(TL|TRY|EUR|USD|€|\$)?$|^\d+(,\d{1,2})?\s*(TL|TRY|EUR|USD|€|\$)?$"
+    return re.match(pattern, amount_str.strip(), re.IGNORECASE) is not None
 
 
 def validate_fields(fields: dict) -> dict:
@@ -65,4 +69,6 @@ if __name__ == "__main__":
     print("Gecerli IBAN testi:", is_valid_iban("TR330006100519786457841326"))
     print("Bozuk IBAN testi:  ", is_valid_iban("TR000000000000000000000000"))
     print("Tarih testi:       ", is_valid_date("18.05.2024"))
+    print("Olmayan tarih:     ", is_valid_date("31.02.2024"))   # False olmali
     print("Tutar testi:       ", is_valid_amount("55.028 TL"))
+    print("Bozuk tutar:       ", is_valid_amount("abc 12"))     # False olmali

@@ -36,6 +36,7 @@ def evaluate():
     # her alan icin dogru sayaci / correct counter per field
     correct = {f: 0 for f in FIELDS}
     total = 0
+    errors = []  # yanlis cikan alanlar / fields the model got wrong
 
     for filename, true_fields in truth.items():
         pdf_path = SAMPLES / filename
@@ -51,6 +52,8 @@ def evaluate():
         for f in FIELDS:
             if normalize(pred.get(f, "")) == normalize(true_fields.get(f, "")):
                 correct[f] += 1
+            else:
+                errors.append((filename, f, true_fields.get(f, ""), pred.get(f, "")))
 
         print(f"  {filename} islendi / done")
 
@@ -62,6 +65,12 @@ def evaluate():
 
     overall = 100 * sum(correct.values()) / (len(FIELDS) * total) if total else 0
     print(f"\n  GENEL / OVERALL: {overall:.1f}%")
+
+    # hatalari tek tek goster: hata mi, format farki mi? / show each error: real mistake or format difference?
+    if errors:
+        print("\n=== Hatalar / Errors (dogru -> model) ===")
+        for filename, f, true_v, pred_v in errors:
+            print(f"  {filename} | {f}: '{true_v}' -> '{pred_v}'")
 
 
 if __name__ == "__main__":

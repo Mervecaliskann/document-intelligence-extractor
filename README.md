@@ -18,19 +18,21 @@ Fatura / dekont gibi yarı yapılandırılmış belgelerden **yapılandırılmı
 PDF yükleniyor → alanlar otomatik çıkarılıyor → her alan doğrulanıyor (IBAN/tarih/tutar) → tablo + JSON olarak gösteriliyor.
 
 ### Sonuçlar
-15 sentetik fatura üzerinde alan bazlı doğruluk:
+15 sentetik fatura üzerinde alan bazlı doğruluk (gpt-oss-120b, Kasım 2026):
 
 | Alan | Doğruluk |
 |---|---|
 | fatura_no | 100.0% |
-| taraf | 80.0% |
+| taraf | 100.0% |
 | musteri | 100.0% |
 | tarih | 100.0% |
-| tutar | 100.0% |
+| tutar | 93.3% |
 | iban | 100.0% |
-| **Genel** | **96.7%** |
+| **Genel** | **98.9%** |
 
-En zayıf alan `taraf` (satıcı adı) — muhtemelen satıcı/müşteri karışıklığı ve "A.Ş." gibi format farkları. Prompt netleştirme veya kısmi-eşleşme metriğiyle iyileştirilebilir. (`python evaluate.py` ile üretilir.)
+Tek hata bir format farkı: model tutarı `20.985 TL` yerine `20.985` yazdı. Sayı doğru, para birimi eksik. Karşılaştırma harfi harfine yapıldığı için bu hata sayılıyor. Aynı ölçümü iki kez çalıştırdığımda sonuç 97.8% ve 98.9% çıktı (`temperature=0` olsa da model her seferinde birebir aynı cevabı vermiyor). `python evaluate.py` sonuçları ve yanlış çıkan alanları listeler.
+
+Not: Tüm faturalar aynı şablondan üretildiği için bu kolay bir test. Farklı düzenlerdeki ve taranmış gerçek belgeler daha zor olur.
 
 ### Neden yaptım (amaç)
 Bankacılık ve genel NLP rollerinde sık istenen bir iş: bir belgeyi insan tek tek okumadan, içindeki kritik alanları otomatik çıkarmak. Bu proje o yeteneği (document intelligence / information extraction) gösteriyor.
@@ -51,7 +53,7 @@ PDF yükle → metni çıkar (pdfplumber) → LLM alanları JSON olarak çıkars
 ### Doğrulama davranışı (önemli)
 Sistem LLM'in çıkardığı bilgiyi körü körüne kabul etmez:
 - Geçerli belgelerde tüm alanlar **"Geçerli ✅"** işaretlenir.
-- Bozuk/gerçek-dışı IBAN'lı belgelerde doğrulama katmanı **"Geçersiz ❌"** der — model doğru okusa bile matematiksel doğrulama ayrıca yapılır.
+- IBAN'ın kontrol haneleri tutmazsa doğrulama katmanı **"Geçersiz ❌"** der. Model metni doğru okusa bile IBAN ayrıca matematiksel olarak kontrol edilir. Tarih gerçek takvime göre (31.02 gibi tarihler reddedilir), tutar da sayı formatına göre kontrol edilir.
 
 ### Kurulum & Çalıştırma
 ```bash
@@ -91,7 +93,7 @@ Anahtar container'a **runtime'da** ortam değişkeni olarak verilir (`.env` repo
 | `Dockerfile` | Uygulamayı container'a paketler |
 
 ### Doğruluk ölçümü (evaluation)
-`python evaluate.py` LLM çıktısını doğru cevaplarla karşılaştırıp **alan bazlı accuracy** verir. Ground truth sadece geliştirmede var (veriyi ben ürettim); production'da doğru cevap olmaz, orada `validators.py` checksum'larına güvenilir.
+`python evaluate.py` LLM çıktısını doğru cevaplarla karşılaştırıp **alan bazlı accuracy** verir ve yanlış çıkan alanları listeler. Ground truth sadece geliştirmede var (veriyi ben ürettim); production'da doğru cevap olmaz, orada `validators.py` checksum'larına güvenilir.
 
 ### Sonraki adımlar (yol haritası)
 - ✅ Docker ile containerize (tamamlandı)
@@ -115,19 +117,21 @@ A small system that extracts **structured information** (party, date, amount, IB
 Upload a PDF → fields are extracted automatically → each field is validated (IBAN/date/amount) → shown as a table + JSON.
 
 ### Results
-Field-level accuracy on 15 synthetic invoices:
+Field-level accuracy on 15 synthetic invoices (gpt-oss-120b, November 2026):
 
 | Field | Accuracy |
 |---|---|
 | fatura_no | 100.0% |
-| taraf | 80.0% |
+| taraf | 100.0% |
 | musteri | 100.0% |
 | tarih | 100.0% |
-| tutar | 100.0% |
+| tutar | 93.3% |
 | iban | 100.0% |
-| **Overall** | **96.7%** |
+| **Overall** | **98.9%** |
 
-The weakest field is `taraf` (seller name) — likely seller/customer confusion and format differences like "A.Ş.". Can be improved with prompt clarification or a partial-match metric. (Generated with `python evaluate.py`.)
+The only error was a format difference: the model wrote the amount as `20.985` instead of `20.985 TL`. The number is right, the currency is missing. The comparison is an exact string match, so this counts as an error. Running the same evaluation twice gave 97.8% and 98.9% (even with `temperature=0`, the model does not always return exactly the same answer). `python evaluate.py` prints the results and lists the fields it got wrong.
+
+Note: all invoices come from the same template, so this is an easy test. Real documents with different layouts, or scanned ones, would be harder.
 
 ### Why (goal)
 A common task in banking and general NLP roles: extracting key fields from a document without a human reading it line by line. This project demonstrates that capability (document intelligence / information extraction).
@@ -148,7 +152,7 @@ Upload PDF → extract text (pdfplumber) → LLM returns fields as JSON
 ### Validation behavior (important)
 The system does not blindly accept the LLM output:
 - For valid documents, all fields are marked **"Valid ✅"**.
-- For documents with a broken/invalid IBAN, the validation layer marks it **"Invalid ❌"** — even if the model read it correctly, a mathematical check is done separately.
+- If the IBAN's check digits do not match, the validation layer marks it **"Invalid ❌"**. Even if the model read the text correctly, the IBAN is checked mathematically on its own. Dates are checked against the real calendar (dates like 31.02 are rejected) and amounts against a number format.
 
 ### Setup & Run
 ```bash
@@ -188,7 +192,7 @@ The key is passed as a **runtime** environment variable (`.env` never enters the
 | `Dockerfile` | Packages the app into a container |
 
 ### Evaluation
-`python evaluate.py` compares the LLM output against the ground truth and reports **field-level accuracy**. Ground truth only exists in development (I generated the data); in production there is no answer key, so we rely on the checksum validation in `validators.py`.
+`python evaluate.py` compares the LLM output against the ground truth, reports **field-level accuracy** and lists the fields it got wrong. Ground truth only exists in development (I generated the data); in production there is no answer key, so we rely on the checksum validation in `validators.py`.
 
 ### Next steps (roadmap)
 - ✅ Containerized with Docker (done)

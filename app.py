@@ -9,6 +9,7 @@ the fields, the validator checks them, and I show the result.
 Calistirmak icin / to run:  streamlit run app.py
 """
 
+import os
 import json
 import streamlit as st
 from extractor import extract_text, extract_fields
@@ -23,10 +24,30 @@ st.caption("PDF yukle → LLM alanlari cikarsin → dogrulanmis sonucu gor. "
 # 1) dosya yukleme kutusu / file uploader
 uploaded = st.file_uploader("Fatura veya dekont yukle (PDF)", type=["pdf"])
 
+
+@st.cache_data(show_spinner=False)
+def run_llm(text: str) -> dict:
+    """Ayni metin icin LLM'i tekrar cagirma. Streamlit her tiklamada (or. JSON indir)
+       sayfayi bastan calistirir; cache olmadan her seferinde yeni API cagrisi olur.
+       EN: don't call the LLM again for the same text. Streamlit reruns the page on
+       every click (e.g. the download button); without a cache that is a new API call."""
+    return extract_fields(text)
+
+
+if not os.getenv("GROQ_API_KEY"):
+    st.error("GROQ_API_KEY bulunamadi. .env dosyasina ekle. / GROQ_API_KEY is missing.")
+    st.stop()
+
 if uploaded:
     # 2) metni cikar / extract text
     with st.spinner("Metin cikariliyor..."):
         text = extract_text(uploaded)
+
+    # taranmis (resim) PDF'te metin katmani yoktur / scanned PDFs have no text layer
+    if not text.strip():
+        st.warning("Bu PDF'te okunabilir metin yok (muhtemelen taranmis bir belge). "
+                   "OCR destegi yol haritasinda. / No text layer found (likely a scanned PDF).")
+        st.stop()
 
     # ham metni gormek isteyen olursa (kapali dursun) / raw text in a collapsible box
     with st.expander("Ham metni gor / show raw text"):
@@ -34,7 +55,11 @@ if uploaded:
 
     # 3) LLM ile alanlari cikar / extract fields with the LLM
     with st.spinner("LLM alanlari cikariyor..."):
-        fields = extract_fields(text)
+        try:
+            fields = run_llm(text)
+        except Exception as e:
+            st.error(f"LLM cagrisi basarisiz / LLM call failed: {e}")
+            st.stop()
 
     # 4) dogrula ve sonuca ekle / validate and merge into result
     checks = validate_fields(fields)
